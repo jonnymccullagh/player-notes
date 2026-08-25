@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sprites>
+	<sprite name="Notes">
+		<effect add_color="237 227 167"/>
+		<image
+			texture="global/icon/notes.png"
+			size="0 3 100% 100%+3"
+		/>
+	</sprite>
+
+	<sprite name="NotesWhite">
+		<effect add_color="255 255 255"/>
+		<image
+			texture="global/icon/notes.png"
+			size="0 3 100% 100%+3"
+		/>
+	</sprite>
+</sprites>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<object name="playerNotesPageRoot">
+
+	<object type="image" sprite="ModernFade"/>
+
+	<object name="page" type="image" style="ModernDialog" size="50%-360 50%-230 50%+360 50%+230">
+
+		<object name="pageTitle" style="ModernLabelText" type="text" size="50%-128 -18 50%+128 14">
+			<translatableAttribute id="caption">Player Notes</translatableAttribute>
+		</object>
+
+		<object type="text" size="20 28 46%-10 52" style="ModernLabelText">
+			<translatableAttribute id="caption">Players</translatableAttribute>
+		</object>
+
+		<object name="playerNotesPlayerList"
+			size="20 56 46%-10 100%-56"
+			style="ModernSortedList"
+			type="olist"
+			sortable="false"
+			font="sans-stroke-16"
+			hidden="true">
+			<column id="player" textcolor="255 255 255" width="99%"/>
+		</object>
+
+		<object name="playerNotesPlayerListFeedback" size="20 62 46%-10 100%-56" type="text" style="ModernLabelText">
+			<translatableAttribute id="caption">No saved player notes found.</translatableAttribute>
+		</object>
+
+		<object type="text" size="46%+10 28 100%-20 52" style="ModernLabelText">
+			<translatableAttribute id="caption">Notes</translatableAttribute>
+		</object>
+
+		<object name="playerNotesList"
+			size="46%+10 56 100%-20 100%-92"
+			style="ModernSortedList"
+			type="olist"
+			sortable="false"
+			font="sans-stroke-16"
+			hidden="true">
+			<column id="note" textcolor="255 255 255" width="99%"/>
+		</object>
+
+		<object name="playerNotesListFeedback" size="46%+10 62 100%-20 100%-92" type="text" style="ModernLabelText">
+			<translatableAttribute id="caption">No notes saved for this player.</translatableAttribute>
+		</object>
+
+		<object name="playerNotesCloseButton" type="button" style="ModernButtonRed" size="100%-150 100%-42 100%-20 100%-14" hotkey="cancel">
+			<translatableAttribute id="caption">Close</translatableAttribute>
+		</object>
+
+		<object name="playerNotesDeletePlayerButton" type="button" style="ModernButtonRed" size="100%-450 100%-42 100%-310 100%-14" enabled="false">
+			<translatableAttribute id="caption">Delete Player</translatableAttribute>
+		</object>
+
+		<object name="playerNotesDeleteNoteButton" type="button" style="ModernButtonRed" size="100%-300 100%-42 100%-160 100%-14" enabled="false">
+			<translatableAttribute id="caption">Delete Note</translatableAttribute>
+		</object>
+
+		<object name="playerNotesAddButton" type="button" style="ModernButtonRed" size="20 100%-42 150 100%-14">
+			<translatableAttribute id="caption">Add Note</translatableAttribute>
+		</object>
+
+	</object>
+
+</object>

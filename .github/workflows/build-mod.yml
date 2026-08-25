@@ -1,0 +1,70 @@
+name: Build Mod Artifacts
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build archives
+        id: build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist
+
+          version="$(tr -d '[:space:]' < version.txt)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          artifact_base="playernotes-${version}"
+          archive_dir="dist/${artifact_base}"
+
+          cp -R playernotes "${archive_dir}"
+
+          (
+            cd dist
+            zip -r "${artifact_base}.zip" "${artifact_base}"
+            tar -czf "${artifact_base}.tar.gz" "${artifact_base}"
+            cp "${artifact_base}.zip" "${artifact_base}.pyromod"
+          )
+
+          (
+            cd "${archive_dir}"
+            zip -r "../${artifact_base}-modio.zip" .
+          )
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/${{ format('playernotes-{0}.zip', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}.tar.gz', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}.pyromod', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}-modio.zip', steps.build.outputs.version) }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: playernotes-build-artifacts
+          path: |
+            dist/${{ format('playernotes-{0}.zip', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}.tar.gz', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}.pyromod', steps.build.outputs.version) }}
+            dist/${{ format('playernotes-{0}-modio.zip', steps.build.outputs.version) }}
+          if-no-files-found: error

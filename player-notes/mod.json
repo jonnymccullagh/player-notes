@@ -1,0 +1,8 @@
+{
+	"name": "player-notes",
+	"version": "0.1.0",
+	"label": "Player Notes",
+	"description": "Save local notes about lobby players and recall them with chat commands.",
+	"ignoreInCompatibilityChecks": true,
+	"dependencies": ["0ad"]
+}
