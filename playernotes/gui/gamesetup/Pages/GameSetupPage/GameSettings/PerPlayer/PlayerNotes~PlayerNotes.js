@@ -55,7 +55,9 @@ PlayerSettingControls.PlayerNotes = class PlayerNotes extends GameSettingControl
 			return;
 
 		this.playerNoteStore.reload();
-		this.button.tooltip = this.playerNoteStore.formatTooltip(playerName) ||
+		const notesTooltip = this.playerNoteStore.formatTooltip(playerName);
+		this.button.sprite = notesTooltip ? "Notes" : "NotesDim";
+		this.button.tooltip = notesTooltip ||
 			sprintf(this.Tooltip, {
 				"player": escapeText(playerName)
 			});

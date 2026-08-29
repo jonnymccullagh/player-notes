@@ -100,12 +100,15 @@ class PlayerNotesPage
 
 	getCurrentPlayerKeys()
 	{
-		return new Set(this.getLivePlayerNames().map(playerName => playerName.toLowerCase()));
+		return new Set(this.getLivePlayerNames()
+			.map(playerName => this.playerNoteStore.sanitizePlayerName(playerName).toLowerCase())
+			.filter(playerName => !!playerName));
 	}
 
 	isCurrentPlayer(playerName)
 	{
-		return this.getCurrentPlayerKeys().has(playerName.toLowerCase());
+		const playerKey = this.playerNoteStore.sanitizePlayerName(playerName).toLowerCase();
+		return this.getCurrentPlayerKeys().has(playerKey);
 	}
 
 	sortPlayers(playerNames)

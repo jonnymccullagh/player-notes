@@ -38,10 +38,14 @@ if (!globalThis.getPlayerNoteStore)
 				if (!notes.length)
 					continue;
 
-				notesByPlayer[this.playerKey(playerName)] = {
-					"username": playerName,
-					"notes": notes
-				};
+				const key = this.playerKey(playerName);
+				if (notesByPlayer[key])
+					notesByPlayer[key].notes.push(...notes);
+				else
+					notesByPlayer[key] = {
+						"username": playerName,
+						"notes": notes
+					};
 			}
 
 			return notesByPlayer;
@@ -54,7 +58,10 @@ if (!globalThis.getPlayerNoteStore)
 
 		sanitizePlayerName(playerName)
 		{
-			return typeof playerName == "string" ? playerName.trim() : "";
+			if (typeof playerName != "string")
+				return "";
+
+			return splitRatingFromNick(playerName.trim()).nick;
 		}
 
 		sanitizeNote(note)
@@ -78,8 +85,12 @@ if (!globalThis.getPlayerNoteStore)
 			const savedPlayerNames = Object.values(this.notesByPlayer).map(entry => entry.username);
 			const playerNames = [...savedPlayerNames];
 			for (const candidatePlayerName of candidatePlayerNames)
-				if (playerNames.indexOf(candidatePlayerName) == -1)
-					playerNames.push(candidatePlayerName);
+			{
+				const sanitizedCandidate = this.sanitizePlayerName(candidatePlayerName);
+				if (sanitizedCandidate &&
+				    playerNames.every(name => this.playerKey(name) != this.playerKey(sanitizedCandidate)))
+					playerNames.push(sanitizedCandidate);
+			}
 
 			const exactMatch = playerNames.find(name => this.playerKey(name) == lowerName);
 			if (exactMatch)

@@ -3,16 +3,21 @@ class PlayerNoteStore
 	constructor()
 	{
 		this.filename = "moddata/player-notes.json";
-		this.notesByPlayer = this.load();
+		this.notesByPlayer = {};
+		this.reload();
 	}
 
 	reload()
 	{
 		this.notesByPlayer = this.load();
+		if (this.needsMigration)
+			this.save();
 	}
 
 	load()
 	{
+		this.needsMigration = false;
+
 		if (!Engine.FileExists(this.filename))
 			return {};
 
@@ -23,9 +28,14 @@ class PlayerNoteStore
 		const notesByPlayer = {};
 		for (const entry of data)
 		{
+			const storedPlayerName = typeof entry?.username == "string" ?
+				entry.username.trim() :
+				"";
 			const playerName = this.sanitizePlayerName(entry?.username);
 			if (!playerName)
 				continue;
+			if (playerName != storedPlayerName)
+				this.needsMigration = true;
 
 			const notes = Array.isArray(entry?.notes) ?
 				entry.notes
@@ -36,10 +46,17 @@ class PlayerNoteStore
 			if (!notes.length)
 				continue;
 
-			notesByPlayer[this.playerKey(playerName)] = {
-				"username": playerName,
-				"notes": notes
-			};
+			const key = this.playerKey(playerName);
+			if (notesByPlayer[key])
+			{
+				notesByPlayer[key].notes.push(...notes);
+				this.needsMigration = true;
+			}
+			else
+				notesByPlayer[key] = {
+					"username": playerName,
+					"notes": notes
+				};
 		}
 
 		return notesByPlayer;
@@ -60,7 +77,10 @@ class PlayerNoteStore
 
 	sanitizePlayerName(playerName)
 	{
-		return typeof playerName == "string" ? playerName.trim() : "";
+		if (typeof playerName != "string")
+			return "";
+
+		return splitRatingFromNick(playerName.trim()).nick;
 	}
 
 	sanitizeNote(note)
@@ -85,8 +105,12 @@ class PlayerNoteStore
 		const savedPlayerNames = Object.values(this.notesByPlayer).map(entry => entry.username);
 		const playerNames = [...savedPlayerNames];
 		for (const candidatePlayerName of candidatePlayerNames)
-			if (playerNames.indexOf(candidatePlayerName) == -1)
-				playerNames.push(candidatePlayerName);
+		{
+			const sanitizedCandidate = this.sanitizePlayerName(candidatePlayerName);
+			if (sanitizedCandidate &&
+			    playerNames.every(name => this.playerKey(name) != this.playerKey(sanitizedCandidate)))
+				playerNames.push(sanitizedCandidate);
+		}
 
 		const exactMatch = playerNames.find(name => this.playerKey(name) == lowerName);
 		if (exactMatch)
