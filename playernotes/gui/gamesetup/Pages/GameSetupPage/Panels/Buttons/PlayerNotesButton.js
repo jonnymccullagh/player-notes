@@ -6,6 +6,7 @@ class PlayerNotesButton
 		if (!this.button)
 			return;
 
+		this.button.hidden = !g_IsNetworked;
 		this.button.tooltip = this.Tooltip;
 		this.button.onPress = this.onPress.bind(this);
 	}

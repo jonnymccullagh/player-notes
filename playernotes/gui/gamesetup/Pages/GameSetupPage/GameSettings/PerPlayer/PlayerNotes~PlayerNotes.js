@@ -50,6 +50,7 @@ PlayerSettingControls.PlayerNotes = class PlayerNotes extends GameSettingControl
 
 		const playerName = this.getAssignedPlayerName();
 		this.button.hidden = this.hidden ||
+			!g_IsNetworked ||
 			this.playerIndex >= g_GameSettings.playerCount.nbPlayers || !playerName;
 		if (this.button.hidden)
 			return;
